@@ -8,6 +8,9 @@ public class ShipPlayer : MonoBehaviour
     private bool playerControlled = false;
 
     [SerializeField]
+    private EdgeLogic edgeLogic;
+
+    [SerializeField]
     private KeyCode forward;
     [SerializeField]
     private KeyCode backward;
@@ -15,6 +18,8 @@ public class ShipPlayer : MonoBehaviour
     private KeyCode spinLeft;
     [SerializeField]
     private KeyCode spinRight;
+    [SerializeField]
+    private KeyCode brake;
     [SerializeField]
     private KeyCode fire;
 
@@ -27,6 +32,7 @@ public class ShipPlayer : MonoBehaviour
     [SerializeField]
     private float maxRotation;
 
+    [SerializeField]
     private float currentRotation;
     [SerializeField]
     private float currentSpeed;
@@ -47,12 +53,12 @@ public class ShipPlayer : MonoBehaviour
             if( Input.GetKey( forward ) )
             {
                 currentSpeed = Mathf.Clamp( currentSpeed + ( moveRate * Time.deltaTime ), 0, maxSpeed );
-                currentDirection += transform.up * currentSpeed * Time.deltaTime;
+                currentDirection = ( currentDirection + ( transform.up * Time.deltaTime * 5 ) ).normalized;
             }
             if( Input.GetKey( backward ) )
             {
-                currentSpeed = Mathf.Clamp( currentSpeed - ( moveRate * Time.deltaTime ), 0, maxSpeed );
-                currentDirection -= currentDirection * currentSpeed * Time.deltaTime;
+                currentSpeed = Mathf.Clamp( currentSpeed - ( moveRate * Time.deltaTime ), -maxSpeed, maxSpeed );
+                currentDirection = ( currentDirection + ( transform.up * Time.deltaTime * 5 ) ).normalized;
             }
             if( Input.GetKey( spinLeft ) )
             {
@@ -62,13 +68,54 @@ public class ShipPlayer : MonoBehaviour
             {
                 currentRotation = Mathf.Clamp( currentRotation - ( rotRate * Time.deltaTime ), -maxRotation, maxRotation );
             }
+            if( Input.GetKey( brake ) )
+            {
+                if( currentSpeed > 0 )
+                {
+                    currentSpeed -= ( moveRate * Time.deltaTime );
+                }
+                else if( currentSpeed < 0 )
+                {
+                    currentSpeed += ( moveRate * Time.deltaTime );
+                }
+
+                if( currentRotation > 0 )
+                {
+                    currentRotation -= ( rotRate * Time.deltaTime );
+                }
+                else if( currentRotation < 0 )
+                {
+                    currentRotation += ( rotRate * Time.deltaTime );
+                }
+
+                if( Mathf.Abs( currentSpeed ) < 0.0001f )
+                {
+                    currentSpeed = 0f;
+                    currentDirection = Vector3.zero;
+                }
+
+                if( Mathf.Abs( currentRotation ) < 0.0001f )
+                {
+                    currentRotation = 0f;
+                }
+            }
         }
     }
 
     void LateUpdate()
     {
         // Apply movement changes
-        transform.position += currentDirection;
+        transform.position += currentDirection.normalized * currentSpeed;
         transform.Rotate( Vector3.forward * currentRotation, Space.World );
+    }
+
+    void OnTriggerEnter2D( Collider2D col )
+    {
+        if( col.gameObject.tag == "Border" )
+        {
+            edgeLogic.ResetEdgeUse();
+
+            Destroy( gameObject );
+        }
     }
 }
