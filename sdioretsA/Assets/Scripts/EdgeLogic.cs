@@ -5,7 +5,7 @@ using UnityEngine;
 public class EdgeLogic : MonoBehaviour
 {
     [SerializeField]
-    private string tag;
+    private new string tag;
 
     [SerializeField]
     private float leftBoundary;
