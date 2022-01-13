@@ -55,8 +55,6 @@ public class EdgeLogic : MonoBehaviour
                     Instantiate( obj, spawnPos, obj.transform.rotation );
                     vertEdgeInUse = true;
                 }
-
-
             }
         }
     }

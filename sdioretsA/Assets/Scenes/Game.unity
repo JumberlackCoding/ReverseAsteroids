@@ -398,7 +398,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 905220886}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.1}
+  m_LocalPosition: {x: -0.0124, y: 0.0025, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -435,7 +435,7 @@ MonoBehaviour:
   currentDirection: {x: 0, y: 0, z: 0}
   bulletPreFab: {fileID: 6290090533868891926, guid: e7e72117c2759d8428e3b909a3941c6c, type: 3}
   bulletBank: []
-  bulletBankCount: 100
+  bulletBankCount: 5
   fireDelay: 0.1
   fireLast: 0
 --- !u!60 &905220890
