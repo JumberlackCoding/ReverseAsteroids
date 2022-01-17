@@ -90,8 +90,8 @@ It's the game of asteroids, but instead of playing as the space ship and shootin
 ## Interface
 
 - ### HUD
-    UI will have to show how much of the resource the player has to make asteroids with. It should also show how many bullets the ship has in its bank. See the linked file for some preliminary ideas. We can always add more stuff.
-    [UI Design Doc](./GameDesignDocs/UIDesign_V1.pdf)
+    UI will have to show how much of the resource the player has to make asteroids with. It should also show how many bullets the ship has in its bank. See the linked file for some preliminary ideas [UI Design Doc](https://github.com/JumberlackCoding/ReverseAsteroids/blob/main/GameDesignDocuments/UIDesign_V1.pdf). We can always add more stuff.
+    
 - ### Menus
     Main Menu, Settings Menu
 - ### Camera Model
