@@ -398,7 +398,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 905220886}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0124, y: 0.0025, z: -0.1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -902,6 +902,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1249350230}
   - component: {fileID: 1249350231}
+  - component: {fileID: 1249350232}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -942,6 +943,25 @@ MonoBehaviour:
   topBoundary: 5
   bottomBoundary: -5
   showDebugLines: 0
+--- !u!114 &1249350232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249350229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95b48025ac07ef847a3489945c003e55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  asteroidLvl0Prefab: {fileID: 2363543761059789799, guid: 74be64167be1e3948ae6a7a252c09339, type: 3}
+  asteroid1Lvl1Prefab: {fileID: 8345302699776752594, guid: 7842ed200cc35a04caa4dc7eea254745, type: 3}
+  asteroid1Lvl2Prefab: {fileID: 1832535212965814165, guid: 3625a0f958dddb6498c3bb4f15663132, type: 3}
+  asteroid1Lvl3Prefab: {fileID: 5673304401429737030, guid: 76350255e5abe4c479dc252c51529747, type: 3}
+  growthRate: 1
+  maxSize: 1
+  mainCamera: {fileID: 519420031}
 --- !u!1 &1759513876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1019,7 +1039,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759513876}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.0001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
