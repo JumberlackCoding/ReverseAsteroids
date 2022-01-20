@@ -959,9 +959,10 @@ MonoBehaviour:
   asteroid1Lvl1Prefab: {fileID: 8345302699776752594, guid: 7842ed200cc35a04caa4dc7eea254745, type: 3}
   asteroid1Lvl2Prefab: {fileID: 1832535212965814165, guid: 3625a0f958dddb6498c3bb4f15663132, type: 3}
   asteroid1Lvl3Prefab: {fileID: 5673304401429737030, guid: 76350255e5abe4c479dc252c51529747, type: 3}
-  growthRate: 1
-  maxSize: 1
   mainCamera: {fileID: 519420031}
+  growthRateDefault: 2
+  growthRateDecay: 0.5
+  startingAsteroidScale: {x: 0.5, y: 0.5, z: 1}
 --- !u!1 &1759513876
 GameObject:
   m_ObjectHideFlags: 0
