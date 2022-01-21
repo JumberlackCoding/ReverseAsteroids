@@ -5,16 +5,21 @@ using UnityEngine;
 
 public class ShipPlayer : MonoBehaviour
 {
+    // Bool to determine if the ship should be player or AI driven
     [SerializeField]
     private bool playerControlled = false;
 
+    // EdgeLogic script reference for handling looping of the ship around edges
     [SerializeField]
     private EdgeLogic edgeLogic;
 
+    // List of KeyCodes for input buttons if the ship is player controlled
     [SerializeField]
     private KeyCode forward;
     [SerializeField]
     private KeyCode backward;
+    [SerializeField]
+    private bool allowedToMoveBackward;
     [SerializeField]
     private KeyCode spinLeft;
     [SerializeField]
@@ -24,17 +29,23 @@ public class ShipPlayer : MonoBehaviour
     [SerializeField]
     private KeyCode fire;
 
+    // Various movement related variables
+    // Translational acceleration
     [SerializeField]
     private float moveRate;
+    // Rotational acceleration
     [SerializeField]
     private float rotRate;
     [SerializeField]
     private float maxSpeed;
     [SerializeField]
     private float maxRotation;
+    // This one makes it so if you're flying in one direction and aiming in another, pressing forward doesn't instantly change your direction
+    // to 100% your new forward and instead slowly corrects in that direction.  The greater this value, the slower the course correction is
     [SerializeField]
     private int directionalSluggishness;
 
+    // All the current movement values
     [SerializeField]
     private float currentRotation;
     [SerializeField]
@@ -42,12 +53,17 @@ public class ShipPlayer : MonoBehaviour
     [SerializeField]
     private Vector3 currentDirection;
 
+    // Bullet related variables
+    // Basic bullet prefab
     [SerializeField]
     private GameObject bulletPreFab;
+    // Bullet pool where bullets are pulled from when fired
     [SerializeField]
     private GameObject[] bulletBank;
+    // Size of the bullet pool
     [SerializeField]
     private int bulletBankCount;
+    // These two prevent the ship from being able to fire a bullet every single frame.  Adds a time based delay between firing bullets
     [SerializeField]
     private float fireDelay;
     [SerializeField]
@@ -55,6 +71,7 @@ public class ShipPlayer : MonoBehaviour
 
     void Start()
     {
+        // Initialize the bullet pool and disable all of them in the hierarchy
         bulletBank = new GameObject[bulletBankCount];
 
         for( int i = 0; i < bulletBankCount; i++ )
@@ -66,14 +83,18 @@ public class ShipPlayer : MonoBehaviour
 
     void Update()
     {
+        // When the ship is player driven
         if( playerControlled )
         {
+            // Watch for any input keys set in the inspector
             if( Input.GetKey( forward ) )
             {
+                // Mathf.Clamp will take the value of the first argument and clamp it within the minimum and maximum values set by the 2nd and 3rd params respectively
                 currentSpeed = Mathf.Clamp( currentSpeed + moveRate, -maxSpeed, maxSpeed );
+                // Direction is always normalized since we've split out direction and speed to a Vector3 and a float instead of having the magnitude of the Vector3 be the speed
                 currentDirection = ( ( currentDirection * directionalSluggishness ) + transform.up ).normalized;
             }
-            if( Input.GetKey( backward ) )
+            if( Input.GetKey( backward ) && allowedToMoveBackward )
             {
                 currentSpeed = Mathf.Clamp( currentSpeed - moveRate, -maxSpeed, maxSpeed );
                 currentDirection = ( ( currentDirection * directionalSluggishness ) + transform.up ).normalized;
@@ -106,6 +127,7 @@ public class ShipPlayer : MonoBehaviour
                     currentRotation += rotRate;
                 }
 
+                // if the current speed is sufficiently slow, just set it to 0 so we don't drift forever at a super duper slow rate
                 if( Mathf.Abs( currentSpeed ) < 0.0001f )
                 {
                     currentSpeed = 0f;
@@ -119,6 +141,7 @@ public class ShipPlayer : MonoBehaviour
             }
             if( Input.GetKey( fire ) )
             {
+                // Check if it's been long enough to fire again
                 if( Time.time >= fireLast + fireDelay )
                 {
                     FireBullet();
@@ -137,6 +160,7 @@ public class ShipPlayer : MonoBehaviour
 
     void FireBullet()
     {
+        // Attempt to get a bullet from the pool and don't blow up if they're all taken
         try
         {
             GameObject bullet = GetBullet();
@@ -166,17 +190,24 @@ public class ShipPlayer : MonoBehaviour
         return result;
     }
 
+    // When the ship collider + rigidbody collides with another collider that has 'IsTrigger = true'
     void OnTriggerEnter2D( Collider2D col )
     {
+        // Make sure the game object we collided with has a tag of "Border" meaning it's reached far enough off screen that there's a clone already
+        // running around in that the player is using as the main ship.  Time to destroy this oen to prevent weird stuff from happening
         if( col.gameObject.tag == "Border" )
         {
+            // Reset edge logic so we can now loop again
             edgeLogic.ResetEdgeUse();
 
+            // Don't forget to clean up the bullet bank until we move this to the GameManager so we don't have to spawn a new one of these everytime
+            // we spawn a new ship when we loop around the edges
             foreach( GameObject go in bulletBank )
             {
                 Destroy( go );
             }
 
+            // Bye bye ship
             Destroy( gameObject );
         }
     }
