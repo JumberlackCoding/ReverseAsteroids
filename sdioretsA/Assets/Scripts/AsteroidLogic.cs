@@ -6,6 +6,10 @@ public class AsteroidLogic : MonoBehaviour
 {
     [SerializeField]
     private float speed;
+    [SerializeField]
+    private float maxSpeed;
+    [SerializeField]
+    private float maxRotationSpeed;
 
     [SerializeField]
     private Vector3 direction;
