@@ -146,7 +146,7 @@ public class ShipPlayer : MonoBehaviour
         }
         catch( NullReferenceException e )
         {
-            Debug.LogWarning( "No bullets in bank" );
+            Debug.LogWarning( "No bullets in bank " + e.Message );
         }
     }
 

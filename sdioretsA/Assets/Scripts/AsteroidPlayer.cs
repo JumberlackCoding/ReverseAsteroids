@@ -25,6 +25,7 @@ public class AsteroidPlayer : MonoBehaviour
     private Vector3 startingAsteroidScale;
 
     private bool haveAsteroid = false;
+    private bool hadAsteroid = false;
     private bool doneGrowing = true;
 
     private int asteroidLevel;
@@ -33,11 +34,15 @@ public class AsteroidPlayer : MonoBehaviour
 
     private GameObject heldAsteroid;
 
+    private AsteroidLogic asteroidLogic;
+
     private Vector3 asteroidScale;
+    private Vector3 previousMouseLocation;
 
     // Start is called before the first frame update
     void Start()
     {
+        previousMouseLocation = Vector3.zero;
         asteroidScale = startingAsteroidScale;
         growthRateActual = growthRateDefault;
     }
@@ -54,8 +59,10 @@ public class AsteroidPlayer : MonoBehaviour
             {
                 heldAsteroid = Instantiate( asteroidLvl0Prefab, mouseLocation, Quaternion.identity );
                 heldAsteroid.transform.localScale = asteroidScale;
+                asteroidLogic = heldAsteroid.GetComponent<AsteroidLogic>();
                 asteroidLevel = 0;
                 haveAsteroid = true;
+                hadAsteroid = true;
                 doneGrowing = false;
             }
         }
@@ -105,15 +112,30 @@ public class AsteroidPlayer : MonoBehaviour
             }
 
             heldAsteroid.transform.localScale = asteroidScale;
+            previousMouseLocation = mouseLocation;
         }
         else
         {
-            asteroidScale = asteroidScale = startingAsteroidScale;
-            asteroidLevel = 0;
-            growthRateActual = growthRateDefault;
-            heldAsteroid = null;
+            if( hadAsteroid )
+            {
+                asteroidScale = startingAsteroidScale;
+                asteroidLevel = 0;
+                growthRateActual = growthRateDefault;
+                heldAsteroid = null;
+                SetAsteroidOnCourse( mouseLocation );
+                hadAsteroid = false;
+            }
         }
 
+    }
+
+    void SetAsteroidOnCourse( Vector3 currMousePos )
+    {
+        Vector3 trajectory = previousMouseLocation - currMousePos;
+        Debug.Log( previousMouseLocation + " - " + currMousePos + " = " + trajectory );
+
+        asteroidLogic.SetDirection( trajectory.normalized );
+        asteroidLogic.SetSpeed( trajectory.magnitude );
     }
 
     void OnDrawGizmos()
