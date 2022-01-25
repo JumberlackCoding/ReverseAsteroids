@@ -419,8 +419,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerControlled: 1
   edgeLogic: {fileID: 1249350231}
+  bulletManager: {fileID: 1249350233}
   forward: 119
   backward: 115
+  allowedToMoveBackward: 0
   spinLeft: 97
   spinRight: 100
   brake: 306
@@ -433,11 +435,6 @@ MonoBehaviour:
   currentRotation: 0
   currentSpeed: 0
   currentDirection: {x: 0, y: 0, z: 0}
-  bulletPreFab: {fileID: 6290090533868891926, guid: e7e72117c2759d8428e3b909a3941c6c, type: 3}
-  bulletBank: []
-  bulletBankCount: 5
-  fireDelay: 0.1
-  fireLast: 0
 --- !u!60 &905220890
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -903,6 +900,7 @@ GameObject:
   - component: {fileID: 1249350230}
   - component: {fileID: 1249350231}
   - component: {fileID: 1249350232}
+  - component: {fileID: 1249350233}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -963,7 +961,22 @@ MonoBehaviour:
   growthRateDefault: 2
   growthRateDecay: 0.5
   startingAsteroidScale: {x: 0.5, y: 0.5, z: 1}
-  frameDragDelay: 6
+--- !u!114 &1249350233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249350229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cf7df7c897fbed468156ab3724c803f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPreFab: {fileID: 6290090533868891926, guid: e7e72117c2759d8428e3b909a3941c6c, type: 3}
+  bulletBank: []
+  bulletBankCount: 5
+  fireDelay: 0.5
 --- !u!1 &1759513876
 GameObject:
   m_ObjectHideFlags: 0
