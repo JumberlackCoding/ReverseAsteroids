@@ -13,6 +13,10 @@ public class ShipPlayer : MonoBehaviour
     [SerializeField]
     private EdgeLogic edgeLogic;
 
+    // Bullet manager 
+    [SerializeField]
+    private BulletManager bulletManager;
+
     // List of KeyCodes for input buttons if the ship is player controlled
     [SerializeField]
     private KeyCode forward;
@@ -53,32 +57,9 @@ public class ShipPlayer : MonoBehaviour
     [SerializeField]
     private Vector3 currentDirection;
 
-    // Bullet related variables
-    // Basic bullet prefab
-    [SerializeField]
-    private GameObject bulletPreFab;
-    // Bullet pool where bullets are pulled from when fired
-    [SerializeField]
-    private GameObject[] bulletBank;
-    // Size of the bullet pool
-    [SerializeField]
-    private int bulletBankCount;
-    // These two prevent the ship from being able to fire a bullet every single frame.  Adds a time based delay between firing bullets
-    [SerializeField]
-    private float fireDelay;
-    [SerializeField]
-    private float fireLast;
-
     void Start()
     {
-        // Initialize the bullet pool and disable all of them in the hierarchy
-        bulletBank = new GameObject[bulletBankCount];
-
-        for( int i = 0; i < bulletBankCount; i++ )
-        {
-            bulletBank[i] = Instantiate( bulletPreFab, new Vector3( 100, 100, 0 ), Quaternion.identity );
-            bulletBank[i].SetActive( false );
-        }
+    
     }
 
     void Update()
@@ -141,53 +122,20 @@ public class ShipPlayer : MonoBehaviour
             }
             if( Input.GetKey( fire ) )
             {
-                // Check if it's been long enough to fire again
-                if( Time.time >= fireLast + fireDelay )
-                {
-                    FireBullet();
-                    fireLast = Time.time;
-                }
+                // Fire the bullet
+                bulletManager.FireBullet( transform );
             }
         }
     }
 
     void LateUpdate()
     {
-        // Apply movement changes
-        transform.position += currentDirection.normalized * currentSpeed * Time.deltaTime;
-        transform.Rotate( Vector3.forward * currentRotation * Time.deltaTime, Space.World );
-    }
-
-    void FireBullet()
-    {
-        // Attempt to get a bullet from the pool and don't blow up if they're all taken
-        try
+        if( playerControlled )
         {
-            GameObject bullet = GetBullet();
-            bullet.transform.position = transform.position;
-            bullet.GetComponent<BulletLogic>().SetDirection( transform.up );
-            bullet.SetActive( true );
+            // Apply movement changes
+            transform.position += currentDirection.normalized * currentSpeed * Time.deltaTime;
+            transform.Rotate( Vector3.forward * currentRotation * Time.deltaTime, Space.World );
         }
-        catch( NullReferenceException e )
-        {
-            Debug.LogWarning( "No bullets in bank " + e.Message );
-        }
-    }
-
-    GameObject GetBullet()
-    {
-        GameObject result = null;
-
-        foreach( GameObject go in bulletBank )
-        {
-            if( !go.activeInHierarchy )
-            {
-                result = go;
-                break;
-            }
-        }
-
-        return result;
     }
 
     // When the ship collider + rigidbody collides with another collider that has 'IsTrigger = true'
@@ -199,13 +147,6 @@ public class ShipPlayer : MonoBehaviour
         {
             // Reset edge logic so we can now loop again
             edgeLogic.ResetEdgeUse();
-
-            // Don't forget to clean up the bullet bank until we move this to the GameManager so we don't have to spawn a new one of these everytime
-            // we spawn a new ship when we loop around the edges
-            foreach( GameObject go in bulletBank )
-            {
-                Destroy( go );
-            }
 
             // Bye bye ship
             Destroy( gameObject );
