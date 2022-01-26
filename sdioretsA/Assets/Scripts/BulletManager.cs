@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class BulletManager : MonoBehaviour 
+public class BulletManager : MonoBehaviour
 {
     // Bullet related variables
     // Basic bullet prefab
@@ -18,6 +18,15 @@ public class BulletManager : MonoBehaviour
     private float fireDelay;
     private float fireLast = 0;
 
+    // Components required for playing sounds
+    // Sound clip
+    [SerializeField]
+    private AudioClip shipFire1;
+    // Thing that will play the sound
+    [SerializeField]
+    private AudioSource audioPlayer;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,10 +41,10 @@ public class BulletManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // void Update()
+    // {
+
+    // }
 
     public void FireBullet( Transform shipTransform )
     {
@@ -50,6 +59,7 @@ public class BulletManager : MonoBehaviour
                 bullet.GetComponent<BulletLogic>().SetDirection( shipTransform.up );
                 bullet.SetActive( true );
                 fireLast = Time.time;
+                audioPlayer.PlayOneShot( shipFire1 );
             }
         }
         catch( NullReferenceException e )
