@@ -183,12 +183,11 @@ public class AsteroidPlayer : MonoBehaviour
                         {
                             // Grab asteroid and slingshot
                             slingshotStart = mouseLocation;
-                            slingshotStartRaw = Input.mousePosition;
-                            slingshotStartRaw.z = -0.04f;
+                            slingshotStart.z = -0.03f;
                             slingshotting = true;
 
                             // Spawn in the line
-                            slingshotLine = Instantiate( slingShotLinePreFab, mouseLocation, Quaternion.identity );
+                            slingshotLine = Instantiate( slingShotLinePreFab, slingshotStart, Quaternion.identity );
                         }
                     }
                 }
@@ -196,8 +195,10 @@ public class AsteroidPlayer : MonoBehaviour
             else if( Input.GetButtonUp( "Fire2" ) && slingshotting )
             {
                 // Calc slingshot trajectory and launch
-                asteroidLogic.SetDirection( ( slingshotStart - mouseLocation ).normalized );
-                asteroidLogic.SetSpeed( ( slingshotStart - mouseLocation ).magnitude );
+                Vector3 mouseLocation4Calc = mouseLocation;
+                mouseLocation4Calc.z = -0.03f;
+                asteroidLogic.SetDirection( ( slingshotStart - mouseLocation4Calc ).normalized );
+                asteroidLogic.SetSpeed( ( slingshotStart - mouseLocation4Calc ).magnitude );
                 // Cleanup
                 asteroidLogic = null;
                 slingshotting = false;
@@ -208,12 +209,34 @@ public class AsteroidPlayer : MonoBehaviour
         // If you're slingshotting, update the line position, rotation and scale so it connects the mouse to the asteroid
         if( slingshotting && ( slingshotLine != null ) )
         {
-            // Scale the line in the Y direction to match the distance between the mouse and asteroid
-            slingshotLine.transform.localScale = new Vector3( slingshotLine.transform.lossyScale.x, Vector3.Distance( slingshotStart, mouseLocation ), 1f );
-            // Put the center in the middle between the two
-            slingshotLine.transform.position = ( slingshotStart + mouseLocation ) / 2;
+            // Scale the line in the X direction to match the distance between the mouse and asteroid
+            float maxLength = asteroidLogic.GetMaxSpeed();
+            Vector3 mouseLocation4Calc = mouseLocation;
+            mouseLocation4Calc.z = -0.03f;
+            // Since we pass in the magnitude of the vector difference between where our mouse started and where it is when we release as the speed for the asteroid when launched,
+            // We will base our line's length on the same metric
+            float length = Vector3.Distance( slingshotStart, mouseLocation4Calc ) > maxLength ? maxLength : Vector3.Distance( slingshotStart, mouseLocation4Calc );
+            slingshotLine.transform.localScale = new Vector3( length, slingshotLine.transform.lossyScale.y, 1f );
 
-            // TODO rotation
+            // Position the line so the one end is always touching the start position and the other will touch the mouse up until the maximum length is reached
+            slingshotLine.transform.position = slingshotStart + ( mouseLocation4Calc - slingshotStart ).normalized * length / 2;
+
+            // Make the line point to the asteroid and the mouse
+            float zRot = Mathf.Rad2Deg * Mathf.Atan( ( slingshotStart.y - mouseLocation4Calc.y ) / ( slingshotStart.x - mouseLocation4Calc.x ) );
+            // When you first right click, the angle is nonexistent since your mouse is on the same point that you right clicked cuz you haven't moved yet
+            zRot = float.IsNaN( zRot ) ? 0 : zRot;
+            // I prefer to do euler angle rotations rather than playing with quaternion rotations since you can easily say rotate around this single axis only
+            // We also use Quaternion.Euler instead of transform.Rotate because the former sets the rotation, the latter adds that rotation
+            // Thus if we used transform.Rotate, it'd spin in circles hyper fast
+            slingshotLine.transform.rotation = Quaternion.Euler( slingshotLine.transform.rotation.eulerAngles.x, slingshotLine.transform.rotation.eulerAngles.y, zRot );
+
+            // Play with the color
+            float percent = length / maxLength;
+            Color newColor;
+            // Lerp is short for Linear Interpolation meaning it will interpolate the color between color a and b based on the percent
+            // THe higher the percent, the close to color b, lower percent mean closer to color a
+            newColor = Color.Lerp( Color.green, Color.red, percent );
+            slingshotLine.GetComponent<SpriteRenderer>().color = newColor;
         }
     }
 

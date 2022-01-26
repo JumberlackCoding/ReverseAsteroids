@@ -103,7 +103,7 @@ MonoBehaviour:
   maxRotationSpeed: 90
   rotationValue: 0
   direction: {x: 0, y: 0, z: 0}
-  collider: {fileID: 3681667087397436421}
+  circollider: {fileID: 3681667087397436421}
   colliderRadiusScaler: 0.02
   colliderRadiusCompensator: 0.02
   sprenderer: {fileID: 2363543761059789798}

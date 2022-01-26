@@ -18,7 +18,7 @@ public class AsteroidLogic : MonoBehaviour
     private Vector3 direction;
 
     [SerializeField]
-    private CircleCollider2D collider;
+    private CircleCollider2D circollider;
 
     [SerializeField]
     private float colliderRadiusScaler;
@@ -64,7 +64,7 @@ public class AsteroidLogic : MonoBehaviour
         */
         float size = sprenderer.sprite.texture.height;
         level = (int)( Mathf.Log( size ) / Mathf.Log( 2 ) ) - 2;
-        collider.radius = ( ( transform.lossyScale.x * colliderRadiusScaler * level * level ) - colliderRadiusCompensator ) / transform.lossyScale.x;
+        circollider.radius = ( ( transform.lossyScale.x * colliderRadiusScaler * level * level ) - colliderRadiusCompensator ) / transform.lossyScale.x;
     }
 
     public void SetDirection( Vector3 dir )
@@ -82,6 +82,11 @@ public class AsteroidLogic : MonoBehaviour
         return speed;
     }
 
+    public float GetMaxSpeed()
+    {
+        return maxSpeed;
+    }
+
     void OnDrawGizmos()
     {
         // This wire sphere gizmo is a useful tool to debug the size of the collider radius.  If enabled, a wire sphere should perfectly overlap the green
@@ -89,7 +94,7 @@ public class AsteroidLogic : MonoBehaviour
         // And select the asteroid to see the green circle
         if( debug )
         {
-            Gizmos.DrawWireSphere( transform.position, collider.radius * transform.lossyScale.x );
+            Gizmos.DrawWireSphere( transform.position, circollider.radius * transform.lossyScale.x );
         }
     }
 }
