@@ -5,13 +5,12 @@ using UnityEngine;
 
 public class ShipPlayer : MonoBehaviour
 {
-    // Bool to determine if the ship should be player or AI driven
-    [SerializeField]
-    private bool playerControlled = false;
-
     // EdgeLogic script reference for handling looping of the ship around edges
     [SerializeField]
     private EdgeLogic edgeLogic;
+
+     [SerializeField]
+    private ShipManager shipManager;
 
     // Bullet manager 
     [SerializeField]
@@ -65,7 +64,7 @@ public class ShipPlayer : MonoBehaviour
     void Update()
     {
         // When the ship is player driven
-        if( playerControlled )
+        if( shipManager.playerControlled )
         {
             // Watch for any input keys set in the inspector
             if( Input.GetKey( forward ) )
@@ -80,6 +79,18 @@ public class ShipPlayer : MonoBehaviour
                 currentSpeed = Mathf.Clamp( currentSpeed - moveRate, -maxSpeed, maxSpeed );
                 currentDirection = ( ( currentDirection * directionalSluggishness ) + transform.up ).normalized;
             }
+            else if( Input.GetKey( backward ))
+            {
+                if( currentSpeed > 0 )
+                {
+                    currentSpeed -= moveRate;
+                }
+                else if( currentSpeed < 0 )
+                {
+                    currentSpeed += moveRate;
+                }
+            }
+            
             if( Input.GetKey( spinLeft ) )
             {
                 currentRotation = Mathf.Clamp( currentRotation + rotRate, -maxRotation, maxRotation );
@@ -130,7 +141,7 @@ public class ShipPlayer : MonoBehaviour
 
     void LateUpdate()
     {
-        if( playerControlled )
+        if( shipManager.playerControlled )
         {
             // Apply movement changes
             transform.position += currentDirection.normalized * currentSpeed * Time.deltaTime;
