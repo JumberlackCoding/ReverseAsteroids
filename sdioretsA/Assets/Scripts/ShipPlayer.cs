@@ -9,12 +9,18 @@ public class ShipPlayer : MonoBehaviour
     [SerializeField]
     private EdgeLogic edgeLogic;
 
-     [SerializeField]
+    [SerializeField]
     private ShipManager shipManager;
 
     // Bullet manager 
     [SerializeField]
     private BulletManager bulletManager;
+
+    // System for controlling the fire on engine thrust
+    [SerializeField]
+    private ParticleSystem particles;
+
+    private bool engineOn = false;
 
     // List of KeyCodes for input buttons if the ship is player controlled
     [SerializeField]
@@ -58,7 +64,7 @@ public class ShipPlayer : MonoBehaviour
 
     void Start()
     {
-    
+
     }
 
     void Update()
@@ -73,13 +79,27 @@ public class ShipPlayer : MonoBehaviour
                 currentSpeed = Mathf.Clamp( currentSpeed + moveRate, -maxSpeed, maxSpeed );
                 // Direction is always normalized since we've split out direction and speed to a Vector3 and a float instead of having the magnitude of the Vector3 be the speed
                 currentDirection = ( ( currentDirection * directionalSluggishness ) + transform.up ).normalized;
+
+                if( !engineOn )
+                {
+                    particles.Play();
+                    engineOn = true;
+                }
+            }
+            if( Input.GetKeyUp( forward ) )
+            {
+                if( engineOn )
+                {
+                    particles.Stop();
+                    engineOn = false;
+                }
             }
             if( Input.GetKey( backward ) && allowedToMoveBackward )
             {
                 currentSpeed = Mathf.Clamp( currentSpeed - moveRate, -maxSpeed, maxSpeed );
                 currentDirection = ( ( currentDirection * directionalSluggishness ) + transform.up ).normalized;
             }
-            else if( Input.GetKey( backward ))
+            else if( Input.GetKey( backward ) )
             {
                 if( currentSpeed > 0 )
                 {
@@ -89,8 +109,14 @@ public class ShipPlayer : MonoBehaviour
                 {
                     currentSpeed += moveRate;
                 }
+
+                if( Mathf.Abs( currentSpeed ) < 0.0001f )
+                {
+                    currentSpeed = 0f;
+                    currentDirection = Vector3.zero;
+                }
             }
-            
+
             if( Input.GetKey( spinLeft ) )
             {
                 currentRotation = Mathf.Clamp( currentRotation + rotRate, -maxRotation, maxRotation );
