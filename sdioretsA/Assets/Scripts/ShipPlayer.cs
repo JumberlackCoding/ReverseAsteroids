@@ -18,7 +18,7 @@ public class ShipPlayer : MonoBehaviour
 
     // System for controlling the fire on engine thrust
     [SerializeField]
-    private ParticleSystem particles;
+    private ParticleSystem[] ThrusterParticles;
 
     private bool engineOn = false;
 
@@ -82,7 +82,11 @@ public class ShipPlayer : MonoBehaviour
 
                 if( !engineOn )
                 {
-                    particles.Play();
+                    foreach( ParticleSystem ps in ThrusterParticles )
+                    {
+                        ps.Play();
+                    }
+
                     engineOn = true;
                 }
             }
@@ -90,7 +94,11 @@ public class ShipPlayer : MonoBehaviour
             {
                 if( engineOn )
                 {
-                    particles.Stop();
+                    foreach( ParticleSystem ps in ThrusterParticles )
+                    {
+                        ps.Stop();
+                    }
+
                     engineOn = false;
                 }
             }
