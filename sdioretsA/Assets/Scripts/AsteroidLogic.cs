@@ -97,4 +97,15 @@ public class AsteroidLogic : MonoBehaviour
             Gizmos.DrawWireSphere( transform.position, circollider.radius * transform.lossyScale.x );
         }
     }
+
+    void OnCollisionEnter2D( Collision2D col )
+    {
+        if( col.gameObject.tag == "Border" )
+        {
+            Debug.Log( "Shot" );
+
+            // Bye bye ship
+            Destroy( gameObject );
+        }
+    }
 }

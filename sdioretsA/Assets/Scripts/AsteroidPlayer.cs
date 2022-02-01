@@ -73,7 +73,7 @@ public class AsteroidPlayer : MonoBehaviour
     {
         // Grab the mouse position every frame and lock the Z coord to -0.04f
         Vector3 mouseLocation = mainCamera.ScreenToWorldPoint( Input.mousePosition );
-        mouseLocation.z = -0.04f;
+        mouseLocation.z = -0.08f;
 
         // When left clicking
         if( Input.GetButton( "Fire1" ) )
@@ -183,7 +183,7 @@ public class AsteroidPlayer : MonoBehaviour
                         {
                             // Grab asteroid and slingshot
                             slingshotStart = mouseLocation;
-                            slingshotStart.z = -0.03f;
+                            slingshotStart.z = -0.04f;
                             slingshotting = true;
 
                             // Spawn in the line
@@ -196,7 +196,7 @@ public class AsteroidPlayer : MonoBehaviour
             {
                 // Calc slingshot trajectory and launch
                 Vector3 mouseLocation4Calc = mouseLocation;
-                mouseLocation4Calc.z = -0.03f;
+                mouseLocation4Calc.z = -0.04f;
                 asteroidLogic.SetDirection( ( slingshotStart - mouseLocation4Calc ).normalized );
                 asteroidLogic.SetSpeed( ( slingshotStart - mouseLocation4Calc ).magnitude );
                 // Cleanup
@@ -212,7 +212,7 @@ public class AsteroidPlayer : MonoBehaviour
             // Scale the line in the X direction to match the distance between the mouse and asteroid
             float maxLength = asteroidLogic.GetMaxSpeed();
             Vector3 mouseLocation4Calc = mouseLocation;
-            mouseLocation4Calc.z = -0.03f;
+            mouseLocation4Calc.z = -0.04f;
             // Since we pass in the magnitude of the vector difference between where our mouse started and where it is when we release as the speed for the asteroid when launched,
             // We will base our line's length on the same metric
             float length = Vector3.Distance( slingshotStart, mouseLocation4Calc ) > maxLength ? maxLength : Vector3.Distance( slingshotStart, mouseLocation4Calc );

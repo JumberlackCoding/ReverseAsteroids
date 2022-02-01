@@ -55,7 +55,9 @@ public class BulletManager : MonoBehaviour
             if( Time.time >= fireLast + fireDelay )
             {
                 GameObject bullet = GetBullet();
-                bullet.transform.position = shipTransform.position;
+                Vector3 pos = shipTransform.position;
+                pos.z = -0.06f;
+                bullet.transform.position = pos;
                 bullet.GetComponent<BulletLogic>().SetDirection( shipTransform.up );
                 bullet.SetActive( true );
                 fireLast = Time.time;
