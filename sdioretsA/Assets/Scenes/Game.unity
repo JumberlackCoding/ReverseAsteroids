@@ -1106,7 +1106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPreFab: {fileID: 6290090533868891926, guid: e7e72117c2759d8428e3b909a3941c6c, type: 3}
   bulletBank: []
-  bulletBankCount: 5
+  bulletBankCount: 10
   fireDelay: 0.5
   shipFire1: {fileID: 8300000, guid: 1461e727aec6098468711195e0b2fe5d, type: 3}
   audioPlayer: {fileID: 519420033}

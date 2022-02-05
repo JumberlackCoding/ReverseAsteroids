@@ -98,14 +98,30 @@ public class AsteroidLogic : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D( Collision2D col )
+    void OnTriggerEnter2D( Collider2D col )
     {
-        if( col.gameObject.tag == "Border" )
+        if( col.gameObject.tag == "Bullet" )
         {
             Debug.Log( "Shot" );
 
-            // Bye bye ship
-            Destroy( gameObject );
+            // Bye bye asteroid
+
+            if( IsValidTarget( gameObject ) )
+            {
+                Destroy( gameObject );
+            }
         }
+    }
+
+    public bool IsValidTarget( GameObject shotAsteroid )
+    {
+        bool result = false;
+
+        if( shotAsteroid.GetComponent<AsteroidLogic>().GetSpeed() > 0 )
+        {
+            result = true;
+        }
+
+        return result;
     }
 }

@@ -48,4 +48,18 @@ public class BulletLogic : MonoBehaviour
             }
         }
     }
+
+    void OnTriggerEnter2D( Collider2D col )
+    {
+        if( col.gameObject.tag == "Asteroid" )
+        {
+            Debug.Log( "Shot" );
+
+            // Bye bye bullet
+            if( col.gameObject.GetComponent<AsteroidLogic>().GetSpeed() > 0 )
+            {
+                gameObject.SetActive( false );
+            }
+        }
+    }
 }
