@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ShipAI : MonoBehaviour
 {
-    // EdgeLogic script reference for handling looping of the ship around edges
+    // ----- EdgeLogic, Ship Manager, and Bullet Manager -----
     [SerializeField]
     private EdgeLogic edgeLogic;
 
@@ -14,6 +14,7 @@ public class ShipAI : MonoBehaviour
     [SerializeField]
     private BulletManager bulletManager;
 
+    // ----- Movement Buttons -----
     [SerializeField]
     private KeyCode forward;
 
@@ -24,63 +25,111 @@ public class ShipAI : MonoBehaviour
     private KeyCode right;
 
     [SerializeField]
+    private KeyCode autoStop;
+
+    [SerializeField]
     private Rigidbody2D playerBody;
 
-    // Various movement related variables
-    // Translational acceleration
+    // ----- Various movement related variables -----
     [SerializeField]
-    private float forwardThrust;
-    // Rotational acceleration
+    private float forwardThrust;     // Translational acceleration (m/s^2)
     [SerializeField]
-    private float turnThrust;
+    private float turnThrust;        // Rotational acceleration (rad/sec^2)
     [SerializeField]
-    private float maxSpeed;
+    private float maxSpeed;          // Max Velocty (m/s^2)
     [SerializeField]
-    private float maxRotation;
+    private float maxRotation;       // Max Rotation (rad/s^2)
 
-    // All the current movement values
-    [SerializeField]
-    private float currentRotation;
-    [SerializeField]
-    private float currentSpeed;
-    [SerializeField]
-    private Vector2 currentDirection;
+
+    // Non Serialized Variables
+    private Vector2 stopDirection;
+    private float stopAngle;        // radians
 
 
     // Start is called before the first frame update
     void Start()
     {
         playerBody = GetComponent<Rigidbody2D>();
+
     }
 
     // Update is called once per frame
     void Update()
     {
         
-
-            // Apply Thrust
-            if( Input.GetKey( forward ) )
-            {
-                // Mathf.Clamp will take the value of the first argument and clamp it within the minimum and maximum values set by the 2nd and 3rd params respectively
-                playerBody.AddForce(transform.up*forwardThrust, ForceMode2D.Force);
-                Debug.Log( transform.up*forwardThrust);
-            }
-            // Turn Left
-            if( Input.GetKey( left ) )
-            {
-                // Mathf.Clamp will take the value of the first argument and clamp it within the minimum and maximum values set by the 2nd and 3rd params respectively
-                playerBody.AddTorque((-5 * Mathf.Deg2Rad) * playerBody.inertia);
-            }
-            // Turn Right
-            if( Input.GetKey( left ) )
-            {
-                // Mathf.Clamp will take the value of the first argument and clamp it within the minimum and maximum values set by the 2nd and 3rd params respectively
-                playerBody.AddTorque((5 * Mathf.Deg2Rad) * playerBody.inertia);
-            }
-
-
         
     }
+
+
+    // Update With Physics Engine
+    void FixedUpdate()
+    {
+
+            // ----- Apply Thrust -----
+            if( Input.GetKey( forward ) & playerBody.velocity.magnitude < maxSpeed)
+            {
+                playerBody.AddForce(transform.up * forwardThrust, ForceMode2D.Force);
+                Debug.Log( transform.up * forwardThrust);
+            }
+
+            // ----- Turn Left -----
+            if( Input.GetKey( left ) & playerBody.angularVelocity < maxRotation)
+            {
+                playerBody.AddTorque(playerBody.inertia * turnThrust);
+                Debug.Log(playerBody.inertia * turnThrust);
+            }
+
+            // ----- Turn Right -----
+            if( Input.GetKey( right ) & playerBody.angularVelocity > (-1 * maxRotation))
+            {
+                playerBody.AddTorque(playerBody.inertia * turnThrust * -1);
+                Debug.Log(playerBody.inertia * turnThrust * -1);
+            }
+
+            // ----- Auto Stop The Ship -----
+            if( Input.GetKey( autoStop ) )
+            {
+                // First we need find which way the ship is moving and set the desired diretion as the opposite
+                stopDirection = -1 * playerBody.velocity.normalized;
+                stopAngle = Mathf.Atan2(stopDirection.y,stopDirection.x);
+                Debug.Log(stopAngle);
+                Debug.Log(playerBody.rotation);
+                Debug.Log(playerBody.rotation * Mathf.Deg2Rad);
+                
+
+                // If we are spinning right fast enough that we cannot stop in under half a rotation, slow down the rotation
+                if (playerBody.angularVelocity > 11111) 
+                {
+
+                }
+
+                // If we are spinning left fast enough that we cannot stop in under half a rotation, slow down the rotation
+                else if (playerBody.angularVelocity < -11111)
+                {
+
+                }
+
+                // Otherwise we are spinning slow enough. Use state error feedback controller to stop rotation in desired direction
+                else
+                {
+                    playerBody.AddTorque(playerBody.inertia * (stopAngle - playerBody.rotation * Mathf.Deg2Rad));
+                    Debug.Log(stopAngle - playerBody.rotation * Mathf.Deg2Rad);
+                }
+                
+                
+                // Once we are pointing in the right direction and not spinning, start thrusting until speed is zero
+                //if( playerBody.velocity.magnitude > 0 )
+                //{
+                //    playerBody.AddForce(transform.up * forwardThrust, ForceMode2D.Force);
+                //    Debug.Log( transform.up * forwardThrust);
+                //D}
+
+
+            }
+
+    }
+
+
 
     void LateUpdate()
     {
